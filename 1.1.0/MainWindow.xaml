@@ -1,0 +1,127 @@
+﻿<Window x:Class="demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Vault Minecraft Luncher 1.1" Height="600" Width="800">
+    <Grid>
+        <Button x:Name="RunGameButton" Click="RunGame" Content="启动游戏" 
+                Width="150" Height="90" 
+                Foreground="CadetBlue"
+                Cursor="Hand" 
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0 0 0 0">
+            <Button.Template>
+                <!-- ControlTemplate标签必须包裹所有内容（包括Triggers） -->
+                <ControlTemplate TargetType="Button">
+                    <!-- 注意：Border的Name是Border，不是btnBorder，要对应 -->
+                    <Border x:Name="Border" CornerRadius="10" Background="White" BorderBrush="CadetBlue" 
+                            BorderThickness="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <!-- 关键：Triggers必须嵌套在ControlTemplate内部 -->
+                    <ControlTemplate.Triggers>
+                        <!-- 鼠标悬浮效果 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#0078D7"/>
+                        </Trigger>
+                        <!-- 鼠标按下效果 -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#00477E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <Button x:Name="DownloadMods" Click="DownloadMods_OnClick"
+                Content="下载"
+                Width="50" Height="50"
+                Foreground="CadetBlue"
+                Cursor="Hand"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0 0 0 0 ">
+            <Button.Template>
+                <!-- ControlTemplate标签必须包裹所有内容（包括Triggers） -->
+                <ControlTemplate TargetType="Button">
+                    <!-- 注意：Border的Name是Border，不是btnBorder，要对应 -->
+                    <Border x:Name="Border" CornerRadius="50" Background="White" BorderBrush="CadetBlue" 
+                            BorderThickness="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#0078D7"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#00477E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <Button x:Name="BackButton"
+                Click = "BackScript"
+                Content= "🔙"
+                Width="50" Height="50"
+                Foreground="CadetBlue"
+                Cursor="Hand"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Visibility="Collapsed"
+                Margin="0 0 0 0 ">
+            <Button.Template>
+                <!-- ControlTemplate标签必须包裹所有内容（包括Triggers） -->
+                <ControlTemplate TargetType="Button">
+                    <!-- 注意：Border的Name是Border，不是btnBorder，要对应 -->
+                    <Border x:Name="Border" CornerRadius="50" Background="White" BorderBrush="CadetBlue" 
+                            BorderThickness="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#0078D7"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#00477E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <Button x:Name="DownloadModButton"
+                Click = "DownloadModScript"
+                Content= "模组"
+                Width="200" Height="50"
+                Foreground="CadetBlue"
+                Cursor="Hand"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Visibility="Collapsed"
+                Margin="0 0 0 0 ">
+            <Button.Template>
+                <!-- ControlTemplate标签必须包裹所有内容（包括Triggers） -->
+                <ControlTemplate TargetType="Button">
+                    <!-- 注意：Border的Name是Border，不是btnBorder，要对应 -->
+                    <Border x:Name="Border" CornerRadius="13" Background="LightBlue" BorderBrush="CadetBlue" 
+                            BorderThickness="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#0078D7"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#00477E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <Label x:Name="ToBeOpenedLater" Content="后续开放..." HorizontalAlignment="Center" VerticalAlignment="Center"
+               Visibility="Collapsed"></Label>
+    </Grid>
+</Window>
