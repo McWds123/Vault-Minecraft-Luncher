@@ -26,7 +26,10 @@ Only supports 64-bit.
 ## VML 2.2.0.0
 添加了下载版本 使用官方源
 对比2.1.0.0 优化了HTML的样式
+
 简化了文件结构
+
+使用了标准的gitub版本控制方式
   ### 如何启动版本?
   1. 在主目录下找到 `Minecraft/VML/你下载的版本` 文件夹
   3. 在 `Minecraft/VML/Script/你下载的版本/` 下创建 `Run.bat` 启动脚本
