@@ -2,7 +2,7 @@
 
 ### 温馨提示 
 
- 不要直接下载score.zip文件不然你下载的就是 1.1.0 版本和  2.1.0.0 版本 没有其他的版本 请到tag里下载最新版本
+ 不要直接下载score.zip文件不然你下载的就是 `README.md` 请到tag里下载最新版本
 
 ### Custom startup script
 In version 1.1.0, you can use an exe as the startup script to launch Minecraft.
