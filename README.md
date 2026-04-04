@@ -4,6 +4,8 @@
 
  不要直接下载score.zip文件不然你下载的就是 `README.md` 请到tag里下载最新版本
 
+ ### 如何下载 ：`https://github.com/McWds123/Vault-Minecraft-Luncher/releases/tag/v2.1.0-or-v1.1.0`
+
 ### Custom startup script
 In version 1.1.0, you can use an exe as the startup script to launch Minecraft.
 
@@ -22,6 +24,8 @@ Only supports 64-bit.
 重构了大部分代码，添加了启动版本和版本列表的功能。
 对比 Vault Minecraft Launcher 优化了性能，使用了高级动画，使用 HTML 制作窗口。
 
+  ### 如何下载 ：`https://github.com/McWds123/Vault-Minecraft-Luncher/releases/tag/v2.1.0-or-v1.1.0`
+  
   ### 如何启动版本？
   1. 在主目录下找到 Minecraft 文件夹
   2. 在 `Minecraft/VML/Script/` 下添加版本文件夹，例如 `1.21.1`
@@ -34,6 +38,7 @@ Only supports 64-bit.
 简化了文件结构
 
 使用了标准的gitub版本控制方式
+  ### 如何下载 ：`https://github.com/McWds123/Vault-Minecraft-Luncher/releases/tag/v2.2.0.0`
   ### 如何启动版本?
   1. 在主目录下找到 `Minecraft/VML/你下载的版本` 文件夹
   3. 在 `Minecraft/VML/Script/你下载的版本/` 下创建 `Run.bat` 启动脚本
