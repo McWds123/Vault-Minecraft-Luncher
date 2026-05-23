@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace Demo;
 
-// 统一模组实体
+/// <summary>
+/// 统一模组实体
+/// </summary>
 public class ModrinthModInfo
 {
     /// <summary>模组名称</summary>
@@ -24,7 +26,9 @@ public class ModrinthModInfo
     public string HomeUrl => $"https://modrinth.com/mod/{Slug}";
 }
 
-// 搜索配置模型（面向对象配置）
+/// <summary>
+/// 搜索配置模型（面向对象配置）
+/// </summary>
 public class ModSearchOption
 {
     /// <summary>MC游戏版本</summary>
@@ -39,7 +43,9 @@ public class ModSearchOption
     public bool IsDesc { get; set; } = true;
 }
 
-// 核心爬虫服务类
+/// <summary>
+/// 核心爬虫服务类
+/// </summary>
 public class ModrinthModService
 {
     private readonly HttpClient _httpClient;
@@ -54,6 +60,8 @@ public class ModrinthModService
     /// <summary>根据配置获取模组列表</summary>
     public async Task<List<ModrinthModInfo>> GetModListAsync(ModSearchOption option)
     {
+        if (option == null) throw new ArgumentNullException(nameof(option));
+
         // 拼接筛选条件
         var facetArr = new List<string>
         {
@@ -61,17 +69,19 @@ public class ModrinthModService
             $"loaders:{option.Loader}",
             "project_type:mod"
         };
-        string facets = $"[[{string.Join("],[", facetArr.Select(x => $"\"{x}\""))}]]";
+        string facets = $"[[{string.Join(",", facetArr.Select(x => $"\"{x}\""))}]]";
         string encodeFacet = HttpUtility.UrlEncode(facets);
 
         string order = option.IsDesc ? "desc" : "asc";
         string apiUrl = $"https://api.modrinth.com/v2/search?limit={option.PageSize}&facets={encodeFacet}&sort={option.SortField}&order={order}";
 
-        string responseJson = await _httpClient.GetStringAsync(apiUrl);
+        using var resp = await _httpClient.GetAsync(apiUrl);
+        resp.EnsureSuccessStatusCode();
+        string responseJson = await resp.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<ModApiRoot>(responseJson);
 
         List<ModrinthModInfo> modList = new();
-        if (result == null || result.Hits.Count == 0) return modList;
+        if (result == null || result.Hits == null || result.Hits.Count == 0) return modList;
 
         foreach (var item in result.Hits)
         {

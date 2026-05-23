@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
@@ -7,26 +6,42 @@ using System.Runtime.InteropServices;
 
 namespace Demo;
 
+/// <summary>
+/// Helper class responsible for downloading libraries described in a Minecraft version JSON.
+/// Public API is preserved: <see cref="DownloadLibrariesAsync(string)"/> remains unchanged.
+/// </summary>
 public class MinecraftLibraryDownloader
 {
     private readonly HttpClient _http = new();
 
     public MinecraftLibraryDownloader()
     {
-        _http.DefaultRequestHeaders.UserAgent.ParseAdd(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+        _http.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
         _http.Timeout = TimeSpan.FromMinutes(10);
     }
 
+    /// <summary>
+    /// Read the specified version JSON and ensure required libraries/natives are downloaded.
+    /// This method keeps the original behavior: it swallows per-library exceptions so one failure
+    /// does not abort the whole process.
+    /// </summary>
+    /// <param name="versionJsonPath">Path to a version JSON file produced by Mojang's manifests.</param>
     public async Task DownloadLibrariesAsync(string versionJsonPath)
     {
+        if (string.IsNullOrWhiteSpace(versionJsonPath))
+            throw new ArgumentException("versionJsonPath cannot be null or empty", nameof(versionJsonPath));
+
         string json = await File.ReadAllTextAsync(versionJsonPath);
         JsonNode root = JsonNode.Parse(json)!;
 
         string os = GetCurrentOS();
         string arch = GetCurrentArch();
 
-        foreach (JsonNode lib in root["libraries"]!.AsArray())
+        var libs = root["libraries"] as JsonArray;
+        if (libs == null)
+            return;
+
+        foreach (JsonNode lib in libs)
         {
             try
             {
@@ -37,7 +52,7 @@ public class MinecraftLibraryDownloader
             }
             catch
             {
-                // ✅ 单个库失败不影响整体
+                // preserve original behavior: ignore single-library failures
             }
         }
     }
@@ -50,15 +65,14 @@ public class MinecraftLibraryDownloader
             await SafeDownloadAsync(
                 artifact["url"]!.ToString(),
                 artifact["path"]!.ToString(),
-                artifact["sha1"]?.ToString()
-            );
+                artifact["sha1"]?.ToString());
         }
 
         // natives
         if (lib["natives"] is JsonNode natives)
         {
             string os = GetCurrentOS();
-            string classifier = os switch
+            string? classifier = os switch
             {
                 "windows" => natives["windows"]?.ToString(),
                 "linux" => natives["linux"]?.ToString(),
@@ -66,14 +80,13 @@ public class MinecraftLibraryDownloader
                 _ => null
             };
 
-            if (classifier != null &&
-                lib["downloads"]?["classifiers"]?[classifier] is JsonNode native)
+            if (!string.IsNullOrEmpty(classifier)
+                && lib["downloads"]?["classifiers"]?[classifier] is JsonNode native)
             {
                 await SafeDownloadAsync(
                     native["url"]!.ToString(),
                     native["path"]!.ToString(),
-                    native["sha1"]?.ToString()
-                );
+                    native["sha1"]?.ToString());
             }
         }
     }
@@ -83,16 +96,17 @@ public class MinecraftLibraryDownloader
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         string fullPath = Path.Combine(baseDir, "Minecraft", "VML", "libraries", relativePath);
 
-        // ✅ 已存在且校验通过，直接跳过
+        // already exists and checksum OK -> skip
         if (File.Exists(fullPath) && await VerifySha1Async(fullPath, expectedSha1))
             return;
 
-        // ✅ 强制释放占用
+        // try to delete any partial file
         TryDeleteFile(fullPath);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+        string? dir = Path.GetDirectoryName(fullPath);
+        if (!string.IsNullOrEmpty(dir))
+            Directory.CreateDirectory(dir);
 
-        // ✅ 下载
         using (var resp = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
         {
             resp.EnsureSuccessStatusCode();
@@ -101,13 +115,13 @@ public class MinecraftLibraryDownloader
             await src.CopyToAsync(dst);
         }
 
-        // ✅ 关键：让杀毒软件和 Windows 喘口气
+        // small delay to reduce race with antivirus/OS
         await Task.Delay(300);
 
         if (!await VerifySha1Async(fullPath, expectedSha1))
         {
             TryDeleteFile(fullPath);
-            throw new Exception("SHA1 校验失败");
+            throw new Exception("SHA1 verification failed");
         }
     }
 
@@ -120,7 +134,7 @@ public class MinecraftLibraryDownloader
         }
         catch
         {
-            // ignore
+            // best-effort, ignore errors
         }
     }
 
@@ -136,13 +150,14 @@ public class MinecraftLibraryDownloader
                 using var sha1 = SHA1.Create();
                 await using var fs = File.OpenRead(path);
                 byte[] hash = await sha1.ComputeHashAsync(fs);
-                return Convert.ToHexString(hash).ToLower() == expected.ToLower();
+                return Convert.ToHexString(hash).ToLowerInvariant() == expected.ToLowerInvariant();
             }
             catch
             {
                 await Task.Delay(300);
             }
         }
+
         return false;
     }
 
@@ -155,7 +170,7 @@ public class MinecraftLibraryDownloader
 
         foreach (JsonNode rule in rules)
         {
-            string action = rule["action"]!.ToString();
+            string action = rule["action"]?.ToString() ?? string.Empty;
 
             if (rule["os"] is JsonNode osRule)
             {
@@ -174,7 +189,7 @@ public class MinecraftLibraryDownloader
         return allow;
     }
 
-    private string GetCurrentOS()
+    private static string GetCurrentOS()
     {
         if (OperatingSystem.IsWindows()) return "windows";
         if (OperatingSystem.IsLinux()) return "linux";
@@ -182,14 +197,14 @@ public class MinecraftLibraryDownloader
         return "unknown";
     }
 
-    private string GetCurrentArch()
+    private static string GetCurrentArch()
     {
         return RuntimeInformation.OSArchitecture switch
         {
             Architecture.X64 => "x86_64",
             Architecture.Arm64 => "arm64",
             Architecture.X86 => "x86",
-            _ => "unknown"
+            _ => "unknown",
         };
     }
 }

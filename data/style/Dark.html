@@ -284,6 +284,25 @@
                 <img src="icon/minecraft.png" alt="" style="width:45px;height:45px;margin-right:50px;vertical-align:middle;">
                 最新版
             </button>
+            
+            <div style="margin-top:20px;">
+                <h3 style="font-family: Consolas; margin-top:10px;">安装 / 下载 Mod 加载器</h3>
+                <div style="margin:8px 0;">
+                    <label style="font-family: Consolas; margin-right:8px;">加载器:</label>
+                    <select id="loaderSelect" style="padding:6px 8px; border-radius:6px; font-family: Consolas;">
+                        <option value="fabric">Fabric</option>
+                        <option value="forge">Forge</option>
+                        <option value="neoforge">NeoForge</option>
+                    </select>
+                </div>
+                <div style="margin:8px 0;">
+                    <label style="font-family: Consolas; margin-right:8px;">Minecraft 版本:</label>
+                    <input id="loaderMcVersion" placeholder="例如 1.21.1" style="padding:6px 8px; border-radius:6px; font-family: Consolas;" />
+                </div>
+                <div style="margin-top:8px;">
+                    <button class="MinecraftVersionButton" onclick="showLoaderModal()">下载所选加载器</button>
+                </div>
+            </div>
         </div>
         <div id="content3" class="content-item">
             <h2>模组下载</h2>
@@ -317,7 +336,7 @@
 <div class='modal' id='cssModal' style="display: none;">
     <div class='modal-content'>
         <h3 id="YesOrNoDownload">是否下载</h3>
-        <button onclick="confirmDownload()" style="width: 80px;height: 30px;background: #4CAF50;color: white
+        <button onclick="confirmModalAction()" style="width: 80px;height: 30px;background: #4CAF50;color: white
         ;border: none;border-radius: 10px;margin-right: 10px;cursor: pointer;">确定</button>
         <button onclick='closeModal()' style="width: 80px;height: 30px;background: #f44336;color: white
         ;border: none;border-radius: 10px;cursor: pointer;">取消</button>

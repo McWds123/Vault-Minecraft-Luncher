@@ -590,6 +590,96 @@ namespace Demo
                 }
             }
 
+            /// <summary>
+            /// 下载 Mod 加载器（目前实现 Fabric 自动下载，Forge/NeoForge 返回未实现提示）。
+            /// 参数为 JSON 字符串，形如: { "loader": "fabric", "mcVersion": "1.21.1" }
+            /// </summary>
+            public async Task DownloadLoader(string jsonParam)
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(jsonParam))
+                    {
+                        PrintLog("DownloadLoader: 参数为空");
+                        return;
+                    }
+
+                    using var doc = JsonDocument.Parse(jsonParam);
+                    var root = doc.RootElement;
+                    string loader = root.GetProperty("loader").GetString() ?? string.Empty;
+                    string mcVersion = root.GetProperty("mcVersion").GetString() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(loader))
+                    {
+                        PrintLog("DownloadLoader: 未指定 loader");
+                        return;
+                    }
+
+                    if (loader.Equals("fabric", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (string.IsNullOrEmpty(mcVersion))
+                        {
+                            PrintLog("DownloadLoader: 未指定 Minecraft 版本，无法为 Fabric 选择对应的 loader");
+                            return;
+                        }
+
+                        PrintLog($"开始获取 Fabric loader 列表: {mcVersion}");
+                        string api = $"https://meta.fabricmc.net/v2/versions/loader/{mcVersion}";
+                        using var http = new HttpClient();
+                        string resp = await http.GetStringAsync(api);
+                        var list = JsonSerializer.Deserialize<List<JsonElement>>(resp);
+                        if (list == null || list.Count == 0)
+                        {
+                            PrintLog("未找到适配的 Fabric loader 版本");
+                            return;
+                        }
+
+                        var first = list[0];
+                        string loaderVersion = first.GetProperty("version").GetString() ?? string.Empty;
+                        if (string.IsNullOrEmpty(loaderVersion))
+                        {
+                            PrintLog("未能解析 Fabric loader 版本");
+                            return;
+                        }
+
+                        string jarUrl = $"https://maven.fabricmc.net/net/fabricmc/fabric-installer/{loaderVersion}/fabric-installer-{loaderVersion}.jar";
+                        PrintLog($"准备下载: {jarUrl}");
+
+                        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                        string outDir = Path.Combine(baseDir, "data", "Loaders");
+                        Directory.CreateDirectory(outDir);
+                        string outPath = Path.Combine(outDir, $"fabric-{mcVersion}-{loaderVersion}.jar");
+
+                        var progressWin = new DownloadProgressWindow($"fabric-{mcVersion}-{loaderVersion}");
+                        progressWin.Show();
+
+                        try
+                        {
+                            await DownloadFileWithProgressToWindow(jarUrl, outPath, progressWin);
+                            progressWin.UpdateStatus("下载完成", true);
+                            await Task.Delay(1500);
+                            progressWin.Dispatcher.Invoke(() => progressWin.Close());
+                        }
+                        catch (Exception ex)
+                        {
+                            PrintLog("下载 Fabric 失败: " + ex.Message);
+                            progressWin.UpdateStatus("下载失败: " + ex.Message, false, true);
+                            progressWin.SetErrorState();
+                        }
+                    }
+                    else
+                    {
+                        // 暂不实现 Forge/NeoForge 的自动下载，显示提示
+                        PrintLog($"DownloadLoader: 自动下载不支持 loader={loader}。目前仅支持 Fabric。\n");
+                        MessageBox.Show($"自动下载暂不支持 {loader}，请手动下载并放入 data\\Loaders 文件夹。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PrintLog("DownloadLoader 发生异常: " + ex.Message);
+                }
+            }
+
             private async Task DownloadFileWithProgressToWindow(string url, string outputPath, DownloadProgressWindow window)
 {
     using (HttpClient client = new HttpClient())
