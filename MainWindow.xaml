@@ -1,0 +1,14 @@
+﻿<Window x:Class="Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="VML启动器" Height="800" Width="1200" Background="#333"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <!-- 确保控件名称是 webView2 -->
+        <wv2:WebView2 x:Name="webView2" />
+        <Label Content="正在加载中" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+               HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" Foreground="White">  </Label>
+    </Grid>
+</Window>

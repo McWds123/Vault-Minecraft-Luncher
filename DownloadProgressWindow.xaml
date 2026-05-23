@@ -1,0 +1,40 @@
+﻿<Window x:Class="Demo.DownloadProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Minecraft版本下载" Height="200" Width="400" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- 版本信息 -->
+        <TextBlock x:Name="VersionText" Grid.Row="0" 
+                   FontWeight="Bold" Margin="0,0,0,5"/>
+        
+        <!-- 状态信息 -->
+        <TextBlock x:Name="StatusText" Grid.Row="1" 
+                   Margin="0,0,0,5"/>
+        
+        <!-- 进度条 -->
+        <ProgressBar x:Name="ProgressBar" Grid.Row="2" 
+                     Minimum="0" Maximum="100" 
+                     Height="20" Margin="0,0,0,5"/>
+        
+        <!-- 进度文本 -->
+        <TextBlock x:Name="ProgressText" Grid.Row="3" 
+                   HorizontalAlignment="Center" Margin="0,0,0,5"/>
+        
+        <!-- 下载速度 -->
+        <TextBlock x:Name="SpeedText" Grid.Row="4" 
+                   HorizontalAlignment="Center" Margin="0,0,0,5"/>
+        
+    </Grid>
+</Window>

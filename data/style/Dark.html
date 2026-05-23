@@ -1,0 +1,508 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible">
+    <title>VML启动器</title>
+    <style
+    >
+        * {
+            margin: 0;
+            padding: 0;
+            outline: none;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        html, body {
+            background: #333;
+            height: 100%;
+            overflow: auto;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+        :root {
+            --mc-green: #11c35c; 
+            --mc-dark-green: #118747;
+        }
+
+        .RunGameButton {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 300px;
+            height: 100px;
+            border-radius: 12px;
+            background: #333;
+            color: var(--mc-green);
+            border: 2px solid var(--mc-green);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.7s ease;
+            z-index: 999;
+        }
+        .RunGameButton:hover {
+            transform: rotate(360deg) scale(1.05);
+            background: #333;
+            color: var(--mc-dark-green);
+            border-color: var(--mc-dark-green);
+        }
+        .RunGameButton:active {
+            transform: scale(0.95);
+        }
+
+        h3 { font-family: Consolas; color: #2c3e50; margin-top: 0; font-size: 16px; }
+        p { font-family: Consolas; margin: 8px 0; }
+        .warning { font-family: Consolas; color: #e74c3c; font-weight: bold; }
+
+        .DownSomethingButton {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 150px;
+            height: 75px;
+            border-radius: 12px;
+            background: #333;
+            color: var(--mc-green);
+            border: 2px solid var(--mc-green);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        .DownSomethingButton:hover {
+            transform: rotate(5deg) scale(1.05);
+            color: var(--mc-dark-green);
+            border-color: var(--mc-dark-green);
+        }
+        .DownSomethingButton:active {
+            transform: rotate(5deg) scale(0.95);
+        }
+
+        .OKButton {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 150px;
+            height: 75px;
+            border-radius: 12px;
+            background: #333;
+            color: var(--mc-green);
+            border: 2px solid var(--mc-green);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        .OKButton:hover {
+            transform: rotate(5deg) scale(1.05);
+            color: var(--mc-dark-green);
+            border-color: var(--mc-dark-green);
+        }
+        .OKButton:active {
+            transform: rotate(5deg) scale(0.95);
+        }
+
+        #mySelect {
+            position: fixed;
+            right: 20px;
+            bottom: 130px;
+            width: 300px;
+            height: 50px;
+            border-radius: 12px;
+            background: #333;
+            color: var(--mc-green);
+            border: 2px solid var(--mc-green);
+            font-size: 16px;
+            font-weight: bold;
+            padding: 0 15px;
+            cursor: pointer;
+            z-index: 999;
+        }
+        #mySelect:hover {
+            color: var(--mc-dark-green);
+            border-color: var(--mc-dark-green);
+        }
+
+        #StyleSelect {
+            position: fixed;
+            top: 100px;
+            width: 750px;
+            height: 45px;
+            border-radius: 8px;
+            background: #333;
+            color: var(--mc-green);
+            border: 2px solid var(--mc-green);
+            font-size: 16px;
+            font-weight: bold;
+            padding: 0 15px;
+            cursor: pointer;
+            z-index: 999;
+        }
+        #StyleSelect:hover {
+            color: var(--mc-dark-green);
+            border-color: var(--mc-dark-green);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .item1 { animation-delay: 0.1s; }
+        .item2 { animation-delay: 0.3s; }
+        .item3 { animation-delay: 0.5s; }
+        .item4 { animation-delay: 0.7s; }
+        .item5 { animation-delay: 0.9s; }
+        .item6 { animation-delay: 1.1s; }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: auto;
+            min-height: 100vh;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: visible;
+        }
+        .left-menu {
+            width: 200px;
+            background: #1e1e1e;
+            padding: 20px 0;
+            display: none;
+        }
+        .menu-btn {
+            border-radius: 12px;
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #333;
+            color:white;
+            background: none;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .menu-btn:hover, .menu-btn.active {
+            border: 2px solid #0a77d6;
+            color: white;
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 30px;
+            background: #333;
+            color: white;
+            height: auto;
+            overflow: visible;
+        }
+        .content-item {
+            display: none;
+        }
+        .content-item.show {
+            display: block;
+        }
+
+        .left-menu.show {
+            display: block;
+        }
+
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center;
+            justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 20px; border-radius: 10px;
+            width: 400px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .MinecraftVersionButton{
+            background: #333;
+            color: white;
+            width:80%;
+            height: 60px;
+            left: 50%;
+            border: 2px solid var(--mc-green);
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            border-radius: 15px;
+            font-family: Consolas;
+            cursor: pointer;
+        }
+        .MinecraftVersionButton:hover{
+            color: var(--mc-dark-green);
+            border-color: var(--mc-dark-green);
+            transform: scale(1.03);
+        }
+        .MinecraftVersionButton:active{
+            transform: translateY(5px);
+        }
+    </style>
+</head>
+
+<body onload="window.external.AutomaticInvocation(); closeModal(); initializePage();">
+<button class="RunGameButton animate item1" onclick="window.external.RunGameButton()">启动游戏</button>
+<select id="mySelect">
+    <option value="">请选择版本</option>
+</select>
+<button class="DownSomethingButton animate item3" onclick="toggleLeftMenu()">菜单</button>
+<div class="container">
+    <div class="left-menu" id="leftMenu">
+        <button class="menu-btn animate item1" onclick="showContent(1)">首页</button>
+        <button class="menu-btn animate item2" onclick="showContent(2)">版本</button>
+        <button class="menu-btn animate item3" onclick="showContent(3)">模组</button>
+        <button class="menu-btn animate item4" onclick="showContent(4)">版本设置</button>
+        <button class="menu-btn animate item5" onclick="showContent(5)">启动器设置</button>
+        <button class="menu-btn animate item6" onclick="showContent(6)">关于</button>
+    </div>
+    <div class="right-content" id="rightContent">
+        <div id="content1" class="content-item show">
+            <h2>首页</h2>
+            <p>这里是首页</p>
+        </div>
+        <div id="content2" class="content-item">
+            <h2 style="font-family: Consolas">下载Minecraft版本 点击下载</h2>
+            <button class="MinecraftVersionButton animate item1" id="lastedVersion">
+                <img src="icon/minecraft.png" alt="" style="width:45px;height:45px;margin-right:50px;vertical-align:middle;">
+                最新版
+            </button>
+        </div>
+        <div id="content3" class="content-item">
+            <h2>模组下载</h2>
+            <p>暂未开放</p>
+        </div>
+        <div id="content4" class="content-item">
+            <h2>版本设置</h2>
+            <p>暂未开放</p>
+        </div>
+        <div id="content5" class="content-item">
+            <h2>启动器设置</h2>
+            <select id="StyleSelect">
+                <option value="">请选择界面样式</option>
+            </select>
+            <button id="ConfirmStyleBtn" class="OKButton animate item1" onclick="window.external.SaveDataOfUsingHtml()">
+                确定
+            </button>
+            
+        </div>
+        <div id="content6" class="content-item">
+            <h1 class="font-family: Consolas;">关于</h1>
+            <h2>VML启动器 — 版权与免责声明</h2>
+            <p>本启动器仅为免费第三方工具，作用是引导用户直接访问 Mojang Studios 官方下载地址获取 Minecraft 客户端文件（client.jar）、资源文件及相关组件。</p>
+            <p>1. 本启动器<span class="warning">不存储、不缓存、不修改、不二次分发</span>任何 Minecraft 官方文件。所有文件均由用户主动从官方源直接下载至本地。</p>
+            <p>2. Minecraft 客户端（含 client.jar）为 Mojang Studios 享有版权的受保护商业软件。</p>
+            <p>3. <span class="warning">严禁任何用户</span>对官方下载的 client.jar 及游戏文件进行复制、分发、打包、转售、出租、共享、用于商业盈利或其他侵权行为。</p>
+            <p>4. 任何用户违反上述规定、实施侵权或违法活动，全部法律责任由用户自行承担，本启动器开发者不承担任何连带责任。</p>
+        </div>
+    </div>
+</div>
+<div class='modal' id='cssModal' style="display: none;">
+    <div class='modal-content'>
+        <h3 id="YesOrNoDownload">是否下载</h3>
+        <button onclick="confirmDownload()" style="width: 80px;height: 30px;background: #4CAF50;color: white
+        ;border: none;border-radius: 10px;margin-right: 10px;cursor: pointer;">确定</button>
+        <button onclick='closeModal()' style="width: 80px;height: 30px;background: #f44336;color: white
+        ;border: none;border-radius: 10px;cursor: pointer;">取消</button>
+    </div>
+</div>
+
+
+
+<script>
+    var selectedVersionForDownload = ""; //mySelect
+    async function callCSharpMethod(methodName, data) {
+        try {
+            if (window.chrome && chrome.webview && chrome.webview.hostObjects) {
+                const api = chrome.webview.hostObjects.scriptAPI;
+                if (api[methodName]) {
+                    return await api[methodName](data);
+                } else {
+                    console.error('C#方法不存在:', methodName);
+                }
+            } else {
+                console.error('WebView2 API不可用');
+            }
+        } catch (error) {
+            console.error('调用C#失败:', error);
+        }
+    }
+    function showContent(index) {
+        var items = document.querySelectorAll('.content-item');
+        for (var i = 0; i < items.length; i++) {
+            items[i].classList.remove('show');
+        }
+        document.getElementById('content' + index).classList.add('show');
+        
+        var btns = document.querySelectorAll('.menu-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.remove('active');
+        }
+        if (btns[index - 1]) {
+            btns[index - 1].classList.add('active');
+        }
+    }
+    function toggleLeftMenu() {
+        const menu = document.getElementById('leftMenu');
+        menu.classList.toggle('show');
+        const right2 = document.getElementById('rightContent');
+        right2.classList.toggle('show');
+    }
+    function showLeftMenu() {
+        const menu = document.getElementById('leftMenu');
+        menu.classList.add('show');
+        const right2 = document.getElementById('rightContent');
+        right2.classList.toggle('show');
+    }
+    function hideLeftMenu() {
+        const menu = document.getElementById('leftMenu');
+        menu.classList.remove('show');
+        const right2 = document.getElementById('rightContent');
+        right2.classList.toggle('show');
+    }
+
+    function closeModal() {
+        console.log('关闭模态窗口');
+        var modal = document.getElementById('cssModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        // 清空存储的版本
+        selectedVersionForDownload = "";
+    }
+    function showModal(version) {
+        if (!version) {
+            console.error('没有提供版本号');
+            return;
+        }
+
+        console.log('显示模态窗口，版本:', version);
+
+        // 存储选择的版本
+        selectedVersionForDownload = version;
+
+        // 更新模态窗口文本
+        var textElement = document.getElementById('YesOrNoDownload');
+        if (textElement) {
+            textElement.innerText = "是否下载: " + version;
+        }
+
+        // 显示模态窗口
+        var modal = document.getElementById('cssModal');
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+
+        // 可选：记录日志
+        callCSharpMethod('PrintLog', '显示下载确认窗口: ' + version);
+    }
+    async function onVersionClick() {
+        if (!selectedVersionForDownload) {
+            alert('没有选择版本');
+            closeModal();
+            return;
+        }
+
+        var version = selectedVersionForDownload;
+        console.log('点击版本:', version);
+
+        // 调用C#方法
+        await callCSharpMethod('PrintLog', '选择了版本: ' + version);
+        await callCSharpMethod('DownloadClientJar', version);
+
+        // 关闭模态窗口
+        closeModal();
+    }
+
+    async function confirmDownload() {
+        console.log('确认下载，版本:', selectedVersionForDownload);
+
+        if (!selectedVersionForDownload) {
+            alert('没有选择版本');
+            closeModal();
+            return;
+        }
+
+        try {
+            // 调用C#方法下载
+            await callCSharpMethod('PrintLog', '开始下载版本: ' + selectedVersionForDownload);
+            await callCSharpMethod('DownloadClientJar', selectedVersionForDownload);
+
+            // 关闭模态窗口
+            closeModal();
+            selectedVersionForDownload  = ""
+        } catch (error) {
+            console.error('下载出错:', error);
+            alert('下载失败: ' + error.message);
+        }
+    }
+    
+    function setupButtonEvents() {
+        console.log('设置按钮事件');
+
+        // 启动游戏按钮
+        var runGameBtn = document.querySelector('.RunGameButton');
+        if (runGameBtn) {
+            runGameBtn.onclick = async function() {
+                console.log('点击启动游戏');
+                await callCSharpMethod('RunGameButton');
+            };
+        }
+
+        // 菜单按钮
+        var menuBtn = document.querySelector('.DownSomethingButton');
+        if (menuBtn) {
+            menuBtn.onclick = toggleLeftMenu;
+        }
+
+        // 版本选择下拉框
+        var versionSelect = document.getElementById('mySelect');
+        if (versionSelect) {
+            versionSelect.onchange = function() {
+                var selectedVersion = this.options[this.selectedIndex].text;
+                console.log('选择版本:', selectedVersion);
+            };
+        }
+
+        // 菜单按钮
+        var menuButtons = document.querySelectorAll('.menu-btn');
+        menuButtons.forEach(function(btn, index) {
+            btn.onclick = function() {
+                showContent(index + 1);
+            };
+        });
+    }
+    function initializePage() {
+        console.log('页面初始化');
+        setupButtonEvents();
+        callCSharpMethod('AutomaticInvocation');
+        var modal = document.getElementById('cssModal');
+        if (modal) {
+            modal.onclick = function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            };
+        }
+        // 调用自动初始化
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+﻿# Visual Studio & Rider
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+
+# Build folders
+bin/
+obj/
+
+# NuGet
+*.nupkg
+packages/
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# Runtime and publish files
+*.runtimeconfig.json
+*.deps.json
+*.dll
+*.pdb
+
+# Logs and databases
+*.log
+*.db
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Backup files
+*~
+*.tmp
+
+# JetBrains
+/.idea
+
+# Resharper
+*.ReSharper*/
+
