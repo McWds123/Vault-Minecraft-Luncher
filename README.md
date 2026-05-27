@@ -1,4 +1,4 @@
-# Vault Minecraft Launcher
+# Vivid Minecraft Launcher
 ## VML 2.4.0.0
   1. 修复了启动脚本无法启动的问题
   2. 初次添加下载模组加载器的功能
